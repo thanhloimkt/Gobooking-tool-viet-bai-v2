@@ -1,0 +1,282 @@
+<!-- ============================================================= -->
+<!--  GO BOOKING · TOOL VIẾT BÀI SALE — ĐOẠN NHÚNG CHO LADIPAGE     -->
+<!--                                                                 -->
+<!--  HƯỚNG DẪN:                                                     -->
+<!--  1. Sau khi deploy backend lên Vercel, anh sẽ có 1 link dạng:   -->
+<!--     https://ten-du-an.vercel.app                                -->
+<!--  2. Tìm dòng BACKEND_URL bên dưới và dán link đó vào            -->
+<!--     (giữ nguyên phần /api/generate ở cuối).                     -->
+<!--  3. Copy TOÀN BỘ nội dung file này, dán vào phần tử "Mã HTML"   -->
+<!--     trên LadiPage (Thêm mới > Phần tử > Mã HTML).               -->
+<!--  4. Xuất bản landing page.                                      -->
+<!-- ============================================================= -->
+
+<div id="gb-tool-root">
+<style>
+  /* Đóng khung trong #gb-tool-root để không đụng style khác của LadiPage */
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap');
+
+  #gb-tool-root {
+    --ocean-deep:#0a3d4a; --ocean:#0e6e7d; --ocean-bright:#14a5b8;
+    --sand:#f4e9d8; --sand-warm:#ecdcc0; --coral:#f0664a; --coral-soft:#f58a72;
+    --sun:#f5a623; --cream:#fbf6ee; --ink:#122a2f; --ink-soft:#3a5559;
+    --line:rgba(14,110,125,0.16); --white:#fff;
+    --shadow-sm:0 2px 8px rgba(10,61,74,0.08);
+    --shadow-md:0 10px 30px rgba(10,61,74,0.12);
+    --shadow-lg:0 24px 60px rgba(10,61,74,0.18);
+    font-family:'Be Vietnam Pro',sans-serif; color:var(--ink); line-height:1.5;
+    -webkit-font-smoothing:antialiased; box-sizing:border-box;
+    max-width:1180px; margin:0 auto; padding:16px;
+  }
+  #gb-tool-root *{ box-sizing:border-box; }
+  #gb-tool-root .gb-grid{ display:grid; grid-template-columns:400px 1fr; gap:24px; align-items:start; }
+  @media (max-width:900px){ #gb-tool-root .gb-grid{ grid-template-columns:1fr; } }
+  #gb-tool-root .gb-panel{ background:var(--white); border-radius:22px; padding:26px; box-shadow:var(--shadow-md); }
+  #gb-tool-root .gb-ptitle{ font-family:'Fraunces',serif; font-weight:600; font-size:19px; color:var(--ocean-deep); margin-bottom:4px; }
+  #gb-tool-root .gb-psub{ font-size:13px; color:var(--ink-soft); margin-bottom:20px; }
+  #gb-tool-root .gb-field{ margin-bottom:16px; }
+  #gb-tool-root .gb-field label{ display:block; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:7px; }
+  #gb-tool-root .gb-field label .opt{ font-weight:400; color:var(--ink-soft); font-size:12px; }
+  #gb-tool-root input[type=text], #gb-tool-root textarea, #gb-tool-root select{
+    width:100%; padding:12px 14px; border:1.5px solid var(--line); border-radius:12px;
+    font-family:inherit; font-size:14px; color:var(--ink); background:var(--cream);
+    transition:all .18s ease; resize:vertical;
+  }
+  #gb-tool-root input[type=text]:focus, #gb-tool-root textarea:focus{
+    outline:none; border-color:var(--ocean-bright); background:var(--white);
+    box-shadow:0 0 0 4px rgba(20,165,184,0.12);
+  }
+  #gb-tool-root textarea{ min-height:70px; }
+  #gb-tool-root .gb-row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  #gb-tool-root .gb-chips{ display:flex; flex-wrap:wrap; gap:8px; }
+  #gb-tool-root .gb-chip{ padding:8px 14px; border-radius:100px; border:1.5px solid var(--line);
+    background:var(--cream); font-size:13px; font-weight:500; cursor:pointer; transition:all .15s ease;
+    color:var(--ink-soft); user-select:none; }
+  #gb-tool-root .gb-chip:hover{ border-color:var(--ocean-bright); color:var(--ocean); }
+  #gb-tool-root .gb-chip.active{ background:var(--ocean); border-color:var(--ocean); color:var(--white); }
+  #gb-tool-root .gb-gen{ width:100%; margin-top:8px; padding:15px; border:none; border-radius:14px;
+    background:linear-gradient(135deg,var(--coral),var(--coral-soft)); color:var(--white);
+    font-family:inherit; font-size:15px; font-weight:700; cursor:pointer; transition:all .2s ease;
+    box-shadow:var(--shadow-md); }
+  #gb-tool-root .gb-gen:hover:not(:disabled){ transform:translateY(-2px); box-shadow:var(--shadow-lg); }
+  #gb-tool-root .gb-gen:disabled{ opacity:.55; cursor:not-allowed; }
+  #gb-tool-root .gb-ohead{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:10px; }
+  #gb-tool-root .gb-ohead h2{ font-family:'Fraunces',serif; font-weight:600; font-size:21px; color:var(--ocean-deep); }
+  #gb-tool-root .gb-regen{ padding:9px 16px; border:1.5px solid var(--ocean); border-radius:100px;
+    background:transparent; color:var(--ocean); font-family:inherit; font-size:13px; font-weight:600;
+    cursor:pointer; transition:all .15s ease; display:none; }
+  #gb-tool-root .gb-regen:hover{ background:var(--ocean); color:var(--white); }
+  #gb-tool-root .gb-empty{ text-align:center; padding:50px 20px; color:var(--ink-soft); }
+  #gb-tool-root .gb-empty .ico{ font-size:48px; margin-bottom:12px; opacity:.5; }
+  #gb-tool-root .gb-empty h3{ font-family:'Fraunces',serif; font-size:18px; color:var(--ocean-deep); margin-bottom:6px; }
+  #gb-tool-root .gb-empty p{ font-size:14px; max-width:320px; margin:0 auto; }
+  #gb-tool-root .gb-card{ background:var(--cream); border:1px solid var(--line); border-radius:18px;
+    padding:20px; margin-bottom:16px; position:relative; overflow:hidden; }
+  #gb-tool-root .gb-card::before{ content:''; position:absolute; top:0; left:0; width:5px; height:100%;
+    background:linear-gradient(var(--ocean-bright),var(--coral)); }
+  #gb-tool-root .gb-tag{ display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
+    color:var(--ocean); background:rgba(20,165,184,0.12); padding:5px 12px; border-radius:100px;
+    margin-bottom:12px; text-transform:uppercase; letter-spacing:.4px; }
+  #gb-tool-root .gb-body{ white-space:pre-wrap; font-size:14.5px; line-height:1.65; color:var(--ink); margin-bottom:14px; }
+  #gb-tool-root .gb-copy{ width:100%; padding:11px; border:none; border-radius:11px; background:var(--ocean);
+    color:var(--white); font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; transition:all .15s ease; }
+  #gb-tool-root .gb-copy:hover{ background:var(--ocean-deep); }
+  #gb-tool-root .gb-copy.copied{ background:#1f9d57; }
+  #gb-tool-root .gb-spin{ width:42px; height:42px; margin:0 auto 16px; border:4px solid var(--sand-warm);
+    border-top-color:var(--ocean); border-radius:50%; animation:gbspin .8s linear infinite; }
+  @keyframes gbspin{ to{ transform:rotate(360deg); } }
+  #gb-tool-root .gb-loading{ text-align:center; padding:46px 20px; color:var(--ink-soft); }
+  #gb-tool-root .gb-err{ background:#fdecea; border:1px solid #f3b8ad; color:#b53520;
+    padding:13px 15px; border-radius:12px; font-size:13.5px; margin-top:12px; }
+  #gb-tool-root .gb-foot{ text-align:center; margin-top:28px; font-size:12px; color:var(--ink-soft); }
+</style>
+
+  <div class="gb-grid">
+    <!-- FORM -->
+    <div class="gb-panel">
+      <div class="gb-ptitle">Thông tin khu nghỉ dưỡng</div>
+      <div class="gb-psub">Điền nhanh thông tin, hệ thống sẽ tự viết bài đăng cho bạn.</div>
+
+      <div class="gb-field">
+        <label>Tên khu nghỉ dưỡng / khách sạn</label>
+        <input type="text" id="gb-resort" placeholder="VD: Flamingo Đại Lải Resort">
+      </div>
+      <div class="gb-row2">
+        <div class="gb-field"><label>Địa điểm</label>
+          <input type="text" id="gb-location" placeholder="VD: Vĩnh Phúc"></div>
+        <div class="gb-field"><label>Giá tham khảo <span class="opt">(tuỳ chọn)</span></label>
+          <input type="text" id="gb-price" placeholder="VD: chỉ từ 2.490k/đêm"></div>
+      </div>
+      <div class="gb-field">
+        <label>Điểm nổi bật <span class="opt">(cách nhau dấu phẩy)</span></label>
+        <textarea id="gb-highlights" placeholder="VD: hồ bơi vô cực, view núi đồi, buffet sáng"></textarea>
+      </div>
+      <div class="gb-row2">
+        <div class="gb-field"><label>Ưu đãi <span class="opt">(tuỳ chọn)</span></label>
+          <input type="text" id="gb-promo" placeholder="VD: giảm 30% đặt sớm"></div>
+        <div class="gb-field"><label>Liên hệ</label>
+          <input type="text" id="gb-contact" placeholder="VD: Inbox / 0900 000 000"></div>
+      </div>
+      <div class="gb-field">
+        <label>Lưu ý / yêu cầu thêm <span class="opt">(tuỳ chọn)</span></label>
+        <textarea id="gb-notes" placeholder="VD: nhấn mạnh ưu đãi 30/4, viết ngắn dưới 150 chữ, thêm SĐT..."></textarea>
+      </div>
+      <div class="gb-field">
+        <label>Đối tượng khách</label>
+        <div class="gb-chips" id="gb-aud">
+          <span class="gb-chip" data-val="gia đình có trẻ nhỏ">Gia đình</span>
+          <span class="gb-chip" data-val="các cặp đôi">Cặp đôi</span>
+          <span class="gb-chip" data-val="nhóm bạn trẻ">Nhóm bạn</span>
+          <span class="gb-chip" data-val="công ty đi team building">Công ty</span>
+          <span class="gb-chip" data-val="khách nghỉ dưỡng cao cấp">Cao cấp</span>
+        </div>
+      </div>
+      <div class="gb-field">
+        <label>Phong cách bài viết</label>
+        <div class="gb-chips" id="gb-tone">
+          <span class="gb-chip active" data-val="cân bằng">Cân bằng</span>
+          <span class="gb-chip" data-val="trẻ trung sôi động">Trẻ trung</span>
+          <span class="gb-chip" data-val="cảm xúc, gợi mở">Cảm xúc</span>
+          <span class="gb-chip" data-val="sang trọng, tinh tế">Sang trọng</span>
+        </div>
+      </div>
+      <button class="gb-gen" id="gb-genbtn">✨ Tạo nội dung bài đăng</button>
+      <div id="gb-formerr"></div>
+    </div>
+
+    <!-- OUTPUT -->
+    <div class="gb-panel">
+      <div class="gb-ohead">
+        <h2>Bài đăng gợi ý</h2>
+        <button class="gb-regen" id="gb-regen">🔄 Tạo lại</button>
+      </div>
+      <div id="gb-output">
+        <div class="gb-empty">
+          <div class="ico">📝</div>
+          <h3>Chưa có bài đăng nào</h3>
+          <p>Điền thông tin bên trái rồi bấm "Tạo nội dung bài đăng" để bắt đầu.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gb-foot">Go Booking · Công cụ nội bộ hỗ trợ Sale · Nội dung do AI tạo, vui lòng kiểm tra trước khi đăng</div>
+</div>
+
+<script>
+(function(){
+  // ====== CẤU HÌNH: DÁN LINK BACKEND VERCEL CỦA ANH VÀO ĐÂY ======
+  // Ví dụ: "https://gobooking-tool.vercel.app/api/generate"
+  var BACKEND_URL = "https://TEN-DU-AN-CUA-ANH.vercel.app/api/generate";
+  // ===============================================================
+
+  var root = document.getElementById('gb-tool-root');
+  function $(id){ return document.getElementById(id); }
+  function v(id){ return ($(id).value || '').trim(); }
+
+  root.querySelectorAll('#gb-aud .gb-chip').forEach(function(c){
+    c.addEventListener('click', function(){ c.classList.toggle('active'); });
+  });
+  root.querySelectorAll('#gb-tone .gb-chip').forEach(function(c){
+    c.addEventListener('click', function(){
+      root.querySelectorAll('#gb-tone .gb-chip').forEach(function(x){ x.classList.remove('active'); });
+      c.classList.add('active');
+    });
+  });
+  function selected(containerId){
+    return Array.prototype.slice.call(root.querySelectorAll('#'+containerId+' .gb-chip.active'))
+      .map(function(c){ return c.dataset.val; });
+  }
+
+  function buildPrompt(d){
+    return "Bạn là chuyên gia viết content marketing du lịch cho đại lý Go Booking tại Việt Nam.\n"
+      + "Nhiệm vụ: viết bài đăng lên CÁC GROUP FACEBOOK nhằm tìm kiếm khách hàng tiềm năng cho khu nghỉ dưỡng dưới đây.\n\n"
+      + "THÔNG TIN:\n"
+      + "- Khu nghỉ dưỡng: " + d.resort + "\n"
+      + "- Địa điểm: " + (d.location || 'không rõ') + "\n"
+      + "- Giá tham khảo: " + (d.price || 'không có') + "\n"
+      + "- Điểm nổi bật: " + (d.highlights || 'không có') + "\n"
+      + "- Ưu đãi: " + (d.promo || 'không có') + "\n"
+      + "- Đối tượng khách: " + d.audience + "\n"
+      + "- Thông tin liên hệ: " + d.contact + "\n"
+      + "- Phong cách yêu cầu: " + d.tone + "\n"
+      + (d.notes ? "\nLƯU Ý / YÊU CẦU THÊM TỪ NHÂN VIÊN SALE (ưu tiên tuân thủ, miễn là không bịa thông tin sai sự thật): " + d.notes + "\n" : "")
+      + "\nHÃY TẠO 3 PHIÊN BẢN BÀI ĐĂNG khác nhau:\n"
+      + "1. \"Giật tít thu hút\" — mở đầu bằng câu hook mạnh, kéo tương tác, ngắn gọn.\n"
+      + "2. \"Đầy đủ thông tin\" — trình bày rõ điểm nổi bật, giá, ưu đãi.\n"
+      + "3. \"Kêu gọi inbox\" — tập trung thúc đẩy khách comment hoặc nhắn tin.\n\n"
+      + "YÊU CẦU:\n"
+      + "- Viết tiếng Việt tự nhiên, đúng văn phong đăng Group Facebook du lịch, dùng emoji hợp lý.\n"
+      + "- Mỗi bài có lời kêu gọi hành động rõ ràng và thông tin liên hệ.\n"
+      + "- Cuối mỗi bài thêm 4-6 hashtag phù hợp.\n"
+      + "- Tuyệt đối không bịa thông tin sai sự thật; nếu thiếu thông tin thì viết chung chung, không bịa con số.\n\n"
+      + "ĐỊNH DẠNG TRẢ VỀ: chỉ trả về một mảng JSON hợp lệ, không kèm giải thích, không markdown:\n"
+      + "[{\"style\":\"Giật tít thu hút\",\"content\":\"...\"},{\"style\":\"Đầy đủ thông tin\",\"content\":\"...\"},{\"style\":\"Kêu gọi inbox\",\"content\":\"...\"}]";
+  }
+
+  function render(posts){
+    var out = $('gb-output'); out.innerHTML = '';
+    posts.forEach(function(p){
+      var card = document.createElement('div'); card.className = 'gb-card';
+      var safe = (p.content || '').replace(/</g,'&lt;');
+      card.innerHTML = '<div class="gb-tag">📌 ' + (p.style||'Bài đăng') + '</div>'
+        + '<div class="gb-body">' + safe + '</div>'
+        + '<button class="gb-copy">📋 Copy nội dung</button>';
+      card.querySelector('.gb-copy').addEventListener('click', function(){
+        var t = card.querySelector('.gb-body').innerText;
+        navigator.clipboard.writeText(t).then(function(){
+          var b = card.querySelector('.gb-copy');
+          b.classList.add('copied'); b.innerHTML = '✅ Đã copy!';
+          setTimeout(function(){ b.classList.remove('copied'); b.innerHTML = '📋 Copy nội dung'; }, 2000);
+        });
+      });
+      out.appendChild(card);
+    });
+  }
+
+  async function generate(){
+    var resort = v('gb-resort');
+    if(!resort){ $('gb-formerr').innerHTML = '<div class="gb-err">Vui lòng nhập tên khu nghỉ dưỡng nhé.</div>'; return; }
+    $('gb-formerr').innerHTML = '';
+
+    if(BACKEND_URL.indexOf('TEN-DU-AN') !== -1){
+      $('gb-formerr').innerHTML = '<div class="gb-err">Tool chưa được cấu hình link backend. Vui lòng báo quản trị viên.</div>';
+      return;
+    }
+
+    var d = {
+      resort: resort, location: v('gb-location'), price: v('gb-price'),
+      highlights: v('gb-highlights'), promo: v('gb-promo'),
+      contact: v('gb-contact') || 'Inbox để được tư vấn',
+      audience: selected('gb-aud').join(', ') || 'khách du lịch nói chung',
+      tone: selected('gb-tone')[0] || 'cân bằng',
+      notes: v('gb-notes')
+    };
+
+    $('gb-genbtn').disabled = true;
+    $('gb-output').innerHTML = '<div class="gb-loading"><div class="gb-spin"></div><p>Đang viết nội dung, chờ một chút nhé...</p></div>';
+
+    try{
+      var resp = await fetch(BACKEND_URL, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ prompt: buildPrompt(d) })
+      });
+      var result = await resp.json();
+      if(!resp.ok) throw new Error(result.error || 'failed');
+      var text = (result.text || '').replace(/```json|```/g,'').trim();
+      var posts;
+      try{ posts = JSON.parse(text); }
+      catch(e){ var m = text.match(/\[[\s\S]*\]/); posts = m ? JSON.parse(m[0]) : null; }
+      if(!posts || !Array.isArray(posts)) throw new Error('parse');
+      render(posts);
+      $('gb-regen').style.display = 'inline-block';
+    }catch(err){
+      $('gb-output').innerHTML = '<div class="gb-empty"><div class="ico">⚠️</div><h3>Có lỗi xảy ra</h3><p>Không tạo được nội dung lúc này. Vui lòng bấm tạo lại nhé.</p></div>';
+    }finally{
+      $('gb-genbtn').disabled = false;
+    }
+  }
+
+  $('gb-genbtn').addEventListener('click', generate);
+  $('gb-regen').addEventListener('click', generate);
+})();
+</script>
